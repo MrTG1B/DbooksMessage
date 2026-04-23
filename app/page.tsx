@@ -1,243 +1,294 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 const NEW_APP_URL = "https://dgen-books-new.vercel.app/";
 
-function FloatingParticle({
-  style,
-}: {
-  style: React.CSSProperties;
-}) {
+/* ─── Premium SVG Icons ─────────────────────────────────────── */
+
+function IconExternalLink({ size = 20 }: { size?: number }) {
   return (
-    <div
-      className="absolute rounded-full particle pointer-events-none"
-      style={style}
-    />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+      <polyline points="15 3 21 3 21 9"/>
+      <line x1="10" y1="14" x2="21" y2="3"/>
+    </svg>
   );
 }
 
-export default function Home() {
-  const btnRef = useRef<HTMLAnchorElement>(null);
+function IconDownload({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+  );
+}
 
-  /* subtle parallax on mouse move */
+function IconTrash({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+    </svg>
+  );
+}
+
+function IconPowerOff({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+      <line x1="12" y1="2" x2="12" y2="12"/>
+    </svg>
+  );
+}
+
+function IconChevronRight({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  );
+}
+
+/* ─── App Icon (green brand style) ─────────────────────────── */
+function AppIcon() {
+  return (
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="brand" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stopColor="#C4E030"/>
+          <stop offset="50%"  stopColor="#4CAF50"/>
+          <stop offset="100%" stopColor="#1A6B30"/>
+        </linearGradient>
+        <linearGradient id="badge-red" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stopColor="#FF6B6B"/>
+          <stop offset="100%" stopColor="#C0392B"/>
+        </linearGradient>
+      </defs>
+      {/* Rounded square app icon */}
+      <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#brand)"/>
+      {/* Open-book silhouette */}
+      <path d="M20 22 C20 20 22 19 24 19 L32 19 L32 45 L24 45 C22 45 20 44 20 42 Z"
+        fill="white" opacity="0.92"/>
+      <path d="M44 22 C44 20 42 19 40 19 L32 19 L32 45 L40 45 C42 45 44 44 44 42 Z"
+        fill="white" opacity="0.68"/>
+      <line x1="32" y1="19" x2="32" y2="45" stroke="rgba(0,0,0,0.08)" strokeWidth="1.5"/>
+      <path d="M22 27 L30 27" stroke="rgba(0,0,0,0.15)" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M22 31 L30 31" stroke="rgba(0,0,0,0.12)" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M22 35 L28 35" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" strokeLinecap="round"/>
+      {/* Red "X" badge */}
+      <circle cx="58" cy="22" r="13" fill="url(#badge-red)" stroke="white" strokeWidth="2.5"/>
+      <line x1="53" y1="17" x2="63" y2="27" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="63" y1="17" x2="53" y2="27" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+/* ─── Decorative background blobs ───────────────────────────── */
+function BackgroundDecor() {
+  return (
+    <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden="true">
+      {/* top-right green blob */}
+      <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] rounded-full animate-pulse-slow"
+        style={{ background: "radial-gradient(circle, rgba(76,175,80,0.12) 0%, transparent 70%)" }}/>
+      {/* bottom-left blob */}
+      <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full animate-pulse-slow delay-500"
+        style={{ background: "radial-gradient(circle, rgba(196,224,48,0.10) 0%, transparent 70%)" }}/>
+      {/* center faint circle */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(26,107,48,0.04) 0%, transparent 70%)" }}/>
+      {/* subtle dot grid */}
+      <div className="absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage: "radial-gradient(circle, #4CAF50 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}/>
+    </div>
+  );
+}
+
+/* ─── Step Card ─────────────────────────────────────────────── */
+function StepCard({
+  step,
+  icon,
+  label,
+  sublabel,
+  accent,
+}: {
+  step: string;
+  icon: React.ReactNode;
+  label: string;
+  sublabel: string;
+  accent: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-3 rounded-2xl p-4 sm:p-5 text-center transition-transform hover:-translate-y-0.5 duration-200"
+      style={{ background: "#ffffff", border: `1px solid ${accent}22`, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+      <div className="w-11 h-11 rounded-xl flex items-center justify-center"
+        style={{ background: `${accent}18`, color: accent }}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-[11px] font-bold tracking-widest uppercase mb-0.5" style={{ color: accent }}>
+          Step {step}
+        </p>
+        <p className="text-sm font-semibold text-gray-800">{label}</p>
+        <p className="text-xs text-gray-400 mt-0.5 leading-snug">{sublabel}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Page ───────────────────────────────────────────────────── */
+export default function Home() {
+  /* subtle parallax on pointer move — desktop only */
   useEffect(() => {
-    const hero = document.getElementById("hero-content");
-    const handleMove = (e: MouseEvent) => {
-      if (!hero) return;
-      const rx = (e.clientX / window.innerWidth - 0.5) * 12;
-      const ry = (e.clientY / window.innerHeight - 0.5) * 8;
-      hero.style.transform = `perspective(800px) rotateY(${rx}deg) rotateX(${-ry}deg)`;
+    const mq = window.matchMedia("(min-width: 768px)");
+    if (!mq.matches) return;
+    const card = document.getElementById("main-card");
+    const onMove = (e: MouseEvent) => {
+      if (!card) return;
+      const rx = (e.clientX / window.innerWidth - 0.5) * 8;
+      const ry = (e.clientY / window.innerHeight - 0.5) * 5;
+      card.style.transform = `perspective(900px) rotateY(${rx}deg) rotateX(${-ry}deg)`;
     };
-    const handleLeave = () => {
-      if (hero) hero.style.transform = "perspective(800px) rotateY(0deg) rotateX(0deg)";
+    const onLeave = () => {
+      if (card) card.style.transform = "perspective(900px) rotateY(0deg) rotateX(0deg)";
     };
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseleave", handleLeave);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseleave", onLeave);
     return () => {
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseleave", handleLeave);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
     };
   }, []);
 
-  const particles = [
-    { width: 6,  height: 6,  top: "12%", left: "8%",  background: "rgba(239,68,68,0.6)",   "--duration": "7s",  "--delay": "0s"   },
-    { width: 4,  height: 4,  top: "30%", left: "92%", background: "rgba(99,102,241,0.7)",  "--duration": "9s",  "--delay": "1s"   },
-    { width: 8,  height: 8,  top: "65%", left: "5%",  background: "rgba(167,139,250,0.5)", "--duration": "8s",  "--delay": "2s"   },
-    { width: 5,  height: 5,  top: "80%", left: "85%", background: "rgba(239,68,68,0.4)",   "--duration": "6s",  "--delay": "0.5s" },
-    { width: 3,  height: 3,  top: "20%", left: "75%", background: "rgba(248,113,113,0.7)", "--duration": "10s", "--delay": "1.5s" },
-    { width: 7,  height: 7,  top: "50%", left: "95%", background: "rgba(129,140,248,0.5)", "--duration": "7s",  "--delay": "3s"   },
-    { width: 4,  height: 4,  top: "88%", left: "45%", background: "rgba(167,139,250,0.6)", "--duration": "11s", "--delay": "2.5s" },
-  ];
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden"
-      style={{ background: "radial-gradient(ellipse at 50% 0%, #1a0a2e 0%, #04040a 55%, #0a0a10 100%)" }}>
+    <div className="min-h-screen w-full flex items-center justify-center px-4 py-10 relative"
+      style={{ background: "linear-gradient(145deg, #F3FAF0 0%, #FAFFF8 40%, #F0F8EC 100%)" }}>
 
-      {/* ── ambient background blobs ── */}
-      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full animate-pulse-slow"
-          style={{ background: "radial-gradient(circle, rgba(239,68,68,0.15) 0%, transparent 70%)" }} />
-        <div className="absolute -bottom-40 -right-40 w-[32rem] h-[32rem] rounded-full animate-pulse-slow delay-500"
-          style={{ background: "radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(167,139,250,0.04) 0%, transparent 70%)" }} />
+      <BackgroundDecor />
 
-        {/* grid overlay */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }} />
-      </div>
+      {/* ── Main card ── */}
+      <div id="main-card"
+        className="relative z-10 w-full max-w-md opacity-0-init animate-card-in"
+        style={{ transformStyle: "preserve-3d", transition: "transform 0.18s ease-out" }}>
 
-      {/* ── floating particles ── */}
-      {particles.map((p, i) => (
-        <FloatingParticle
-          key={i}
-          style={{
-            width: p.width,
-            height: p.height,
-            top: p.top,
-            left: p.left,
-            background: p.background,
-            ["--duration" as string]: p["--duration"],
-            ["--delay" as string]: p["--delay"],
-          }}
-        />
-      ))}
+        {/* Top brand stripe */}
+        <div className="h-1 w-full rounded-t-3xl"
+          style={{ background: "linear-gradient(90deg, #C4E030, #4CAF50, #1A6B30)" }}/>
 
-      {/* ── main card ── */}
-      <div id="hero-content"
-        className="relative z-10 max-w-2xl w-full mx-4 transition-transform duration-200 ease-out"
-        style={{ transformStyle: "preserve-3d" }}>
+        {/* Card body */}
+        <div className="rounded-b-3xl rounded-tr-3xl bg-white px-6 py-8 sm:px-8 sm:py-10 flex flex-col items-center gap-7"
+          style={{ boxShadow: "0 8px 40px rgba(26,107,48,0.10), 0 2px 12px rgba(0,0,0,0.06)", border: "1px solid rgba(76,175,80,0.18)", borderTop: "none" }}>
 
-        {/* card background */}
-        <div className="relative rounded-3xl overflow-hidden animate-border-glow"
-          style={{
-            background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)",
-            border: "1px solid rgba(239,68,68,0.3)",
-            backdropFilter: "blur(24px)",
-          }}>
-
-          {/* top gradient bar */}
-          <div className="h-1 w-full"
-            style={{ background: "linear-gradient(90deg, #ef4444, #a78bfa, #6366f1)" }} />
-
-          <div className="p-8 md:p-12 flex flex-col items-center text-center gap-8">
-
-            {/* ── icon ── */}
-            <div className="opacity-0-init animate-scale-in relative flex items-center justify-center">
-              {/* outer spinning ring */}
-              <div className="absolute w-28 h-28 rounded-full border-2 border-dashed border-red-500/30 animate-spin-slow" />
-              {/* inner glow ring */}
-              <div className="absolute w-20 h-20 rounded-full animate-pulse-slow"
-                style={{ background: "radial-gradient(circle, rgba(239,68,68,0.2) 0%, transparent 70%)" }} />
-              {/* icon circle */}
-              <div className="w-16 h-16 rounded-full flex items-center justify-center animate-float"
-                style={{ background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)", boxShadow: "0 0 30px rgba(239,68,68,0.4)" }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                </svg>
-              </div>
+          {/* ── Icon ── */}
+          <div className="relative opacity-0-init animate-scale-in flex items-center justify-center">
+            <div className="absolute w-32 h-32 rounded-full border-2 border-dashed animate-spin-slow"
+              style={{ borderColor: "rgba(76,175,80,0.25)" }}/>
+            <div className="absolute w-24 h-24 rounded-full animate-pulse-slow"
+              style={{ background: "radial-gradient(circle, rgba(76,175,80,0.12) 0%, transparent 70%)" }}/>
+            <div className="animate-float">
+              <AppIcon />
             </div>
-
-            {/* ── status badge ── */}
-            <div className="opacity-0-init animate-fade-in-down delay-200">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase"
-                style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.35)", color: "#fca5a5" }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                Service Discontinued
-              </span>
-            </div>
-
-            {/* ── headline ── */}
-            <div className="opacity-0-init animate-fade-in-up delay-300 space-y-3">
-              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">
-                <span className="shimmer-text">DBooks</span>
-                <span className="text-white/90"> has </span>
-                <br />
-                <span className="text-white/90">been </span>
-                <span style={{ color: "#ef4444" }}>shut&nbsp;down</span>
-              </h1>
-              <p className="text-base md:text-lg text-white/50 font-light max-w-md mx-auto leading-relaxed">
-                This PWA is no longer active.
-              </p>
-            </div>
-
-            {/* ── divider ── */}
-            <div className="opacity-0-init animate-fade-in-up delay-400 w-full">
-              <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent, rgba(167,139,250,0.3), transparent)" }} />
-            </div>
-
-            {/* ── body message ── */}
-            <div className="opacity-0-init animate-fade-in-up delay-500 text-white/70 text-sm md:text-base leading-relaxed max-w-lg space-y-3">
-              <p>
-                We&apos;ve moved to a brand-new, faster experience. Click the button below to open the new site and&nbsp;
-                <span className="text-violet-300 font-medium">download the updated app</span>.
-              </p>
-              <p className="text-white/50 text-sm">
-                Once you&apos;ve installed the new app, you can safely&nbsp;
-                <span className="text-red-400 font-medium">uninstall this one forever</span>.
-              </p>
-            </div>
-
-            {/* ── steps ── */}
-            <div className="opacity-0-init animate-fade-in-up delay-700 grid grid-cols-3 gap-3 w-full">
-              {[
-                { icon: "↗", label: "Open new site",   color: "#6366f1", step: "1" },
-                { icon: "⬇",  label: "Install new app", color: "#a78bfa", step: "2" },
-                { icon: "🗑",  label: "Remove old app",  color: "#ef4444", step: "3" },
-              ].map(({ icon, label, color, step }) => (
-                <div key={step} className="flex flex-col items-center gap-2 rounded-2xl p-4"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg"
-                    style={{ background: `${color}22`, border: `1px solid ${color}55` }}>
-                    {icon}
-                  </div>
-                  <span className="text-xs text-white/60 font-medium">{label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* ── CTA button ── */}
-            <div className="opacity-0-init animate-fade-in-up delay-900 w-full">
-              <a
-                ref={btnRef}
-                href={NEW_APP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative inline-flex items-center justify-center gap-3 w-full rounded-2xl px-8 py-4 text-white font-semibold text-base md:text-lg overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] animate-btn-glow"
-                style={{ background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)" }}>
-                {/* shine sweep */}
-                <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
-                  style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }} />
-
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2"
-                  strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-                <span className="relative z-10">Open New DBooks App</span>
-
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round"
-                  className="relative z-10 ml-1 group-hover:translate-x-1 transition-transform">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </a>
-
-              {/* sub-label */}
-              <p className="mt-3 text-xs text-white/30 text-center">
-                Opens in Chrome &bull; Free &bull; No account required
-              </p>
-            </div>
-
-            {/* ── progress bar ── */}
-            <div className="opacity-0-init animate-fade-in-up delay-1100 w-full">
-              <div className="h-0.5 w-full rounded-full overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.07)" }}>
-                <div className="progress-bar-fill h-full rounded-full"
-                  style={{ background: "linear-gradient(90deg, #6366f1, #a78bfa, #ef4444)" }} />
-              </div>
-              <p className="mt-2 text-[11px] text-white/20 text-center tracking-wider uppercase">
-                Migration complete — ready to move on
-              </p>
-            </div>
-
           </div>
 
-          {/* bottom gradient bar */}
-          <div className="h-0.5 w-full"
-            style={{ background: "linear-gradient(90deg, #6366f1, #a78bfa, transparent)" }} />
+          {/* ── Badge ── */}
+          <div className="opacity-0-init animate-badge-pop delay-200">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
+              style={{ background: "rgba(220,38,38,0.08)", border: "1px solid rgba(220,38,38,0.25)", color: "#C0392B" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"/>
+              App Discontinued
+            </span>
+          </div>
+
+          {/* ── Headline ── */}
+          <div className="opacity-0-init animate-fade-in-up delay-300 text-center space-y-2">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight text-gray-900">
+              <span className="brand-shimmer">Dgen-Books</span>
+              <br/>
+              <span className="text-gray-800">has been </span>
+              <span style={{ color: "#C0392B" }}>shut&nbsp;down</span>
+            </h1>
+            <p className="text-sm sm:text-base text-gray-500 font-normal max-w-xs mx-auto leading-relaxed">
+              This PWA is no longer active.
+            </p>
+          </div>
+
+          {/* ── Divider ── */}
+          <div className="opacity-0-init animate-fade-in-up delay-400 w-full">
+            <div className="h-px w-full rounded-full"
+              style={{ background: "linear-gradient(90deg, transparent, rgba(76,175,80,0.25), transparent)" }}/>
+          </div>
+
+          {/* ── Body copy ── */}
+          <div className="opacity-0-init animate-fade-in-up delay-500 text-center space-y-2 text-gray-500 text-sm sm:text-base leading-relaxed max-w-sm">
+            <p>
+              We&apos;ve moved to a brand-new, faster experience. Click or tap the button below to open the
+              new site and&nbsp;<span className="font-semibold text-green-700">download the updated app</span>.
+            </p>
+            <p className="text-xs sm:text-sm text-gray-500">
+              Once installed, you can safely&nbsp;
+              <span className="font-semibold text-red-600">uninstall this app forever</span>.
+            </p>
+          </div>
+
+          {/* ── Steps ── */}
+          <div className="opacity-0-init animate-fade-in-up delay-600 grid grid-cols-3 gap-3 w-full">
+            <StepCard step="1" icon={<IconExternalLink size={20}/>} label="Open new site"
+              sublabel="In Chrome browser" accent="#4CAF50"/>
+            <StepCard step="2" icon={<IconDownload size={20}/>} label="Install app"
+              sublabel="Add to Home Screen" accent="#2E7D32"/>
+            <StepCard step="3" icon={<IconTrash size={20}/>} label="Remove old"
+              sublabel="Uninstall this app" accent="#C0392B"/>
+          </div>
+
+          {/* ── CTA Button ── */}
+          <div className="opacity-0-init animate-fade-in-up delay-700 w-full">
+            <a href={NEW_APP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-flex items-center justify-center gap-3 w-full rounded-2xl px-6 py-4 text-white font-bold text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] animate-btn-glow"
+              style={{ background: "linear-gradient(135deg, #8DC63F 0%, #4CAF50 45%, #1A6B30 100%)" }}>
+              {/* shine sweep */}
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"
+                style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)" }}/>
+              <span className="relative z-10 flex-shrink-0">
+                <IconExternalLink size={22}/>
+              </span>
+              <span className="relative z-10">Open New Dgen-Books App</span>
+              <span className="relative z-10 flex-shrink-0 group-hover:translate-x-0.5 transition-transform duration-200">
+                <IconChevronRight size={18}/>
+              </span>
+            </a>
+            <p className="mt-2.5 text-xs text-gray-400 text-center">
+              Opens in Chrome &bull; Free &bull; No account required
+            </p>
+          </div>
+
+          {/* ── Progress bar ── */}
+          <div className="opacity-0-init animate-fade-in-up delay-900 w-full">
+            <div className="h-1 w-full rounded-full overflow-hidden bg-gray-100">
+              <div className="progress-bar-fill h-full rounded-full"
+                style={{ background: "linear-gradient(90deg, #C4E030, #4CAF50, #1A6B30)" }}/>
+            </div>
+            <p className="mt-2 text-[10px] tracking-widest uppercase text-gray-400 text-center font-medium">
+              Migration complete — ready to move on
+            </p>
+          </div>
+
         </div>
 
-        {/* card shadow glow */}
-        <div className="absolute inset-0 -z-10 rounded-3xl blur-2xl opacity-30"
-          style={{ background: "linear-gradient(135deg, rgba(239,68,68,0.3), rgba(99,102,241,0.3))" }} />
+        {/* Card drop-shadow glow */}
+        <div className="absolute inset-0 -z-10 rounded-3xl blur-2xl opacity-20 animate-pulse-slow"
+          style={{ background: "linear-gradient(135deg, rgba(196,224,48,0.6), rgba(26,107,48,0.6))" }}/>
       </div>
     </div>
   );
